@@ -76,13 +76,22 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+# Home button (always visible)
+col1, col2, col3 = st.columns([1, 6, 1])
+with col1:
+    if st.button("🏠 Home", key="home_btn"):
+        st.session_state.page = 'landing'
+        st.rerun()
+
+st.markdown("---")  # Separator line
+
 # Initialize session state
 if 'page' not in st.session_state:
     st.session_state.page = 'landing'
 
 # Landing page
 if st.session_state.page == 'landing':
-    st.markdown('<h1 class="main-header">💰 Savings Goal Tracker</h1>', unsafe_allow_html=True)
+    st.markdown('<h1 class="main-header">🏠 Savings Goal Tracker</h1>', unsafe_allow_html=True)
     st.markdown('<p class="subtitle">Turn your dreams into achievable goals</p>', unsafe_allow_html=True)
     
     col1, col2, col3 = st.columns([1, 2, 1])
@@ -96,9 +105,6 @@ if st.session_state.page == 'landing':
             st.rerun()
 
 # Signup page
-
-
-
 elif st.session_state.page == 'signup':
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
@@ -117,47 +123,55 @@ elif st.session_state.page == 'signup':
                 st.error("Please fill in all required fields")
             elif password != confirm_password:
                 st.error("Passwords don't match")
+            elif len(password) < 6:
+                st.error("Password must be at least 6 characters")
             else:
-                # Try to create user in database
-                # TODO: Add database code here
-                st.success("Account created successfully!")
-                st.balloons()
+                try:
+                    # Debug: Check database connection
+                    db_url = os.getenv("DATABASE_URL")
+                    st.write(f"Database URL exists: {bool(db_url)}")
+                    
+                    # Connect to database
+                    conn = psycopg2.connect(db_url)
+                    cursor = conn.cursor()
+                    
+                    # Check if users table exists
+                    cursor.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'")
+                    tables = cursor.fetchall()
+                    st.write(f"Tables found: {[t[0] for t in tables]}")
+                    
+                    # Check if email already exists
+                    cursor.execute("SELECT email FROM users WHERE email = %s", (email,))
+                    if cursor.fetchone():
+                        st.error("Email already registered. Try signing in instead.")
+                    else:
+                        # Create new user
+                        user_id = str(uuid.uuid4())
+                        cursor.execute(
+                            "INSERT INTO users (id, email, password_hash, first_name) VALUES (%s, %s, %s, %s)",
+                            (user_id, email, password, first_name)
+                        )
+                        conn.commit()
+                        st.success("Account created successfully! 🎉")
+                        st.balloons()
+                    
+                    conn.close()
+                    
+                except Exception as e:
+                    st.error(f"Detailed error: {str(e)}")
         
         # Back to landing page
-        if st.button("← Back to Home", key="back_to_home"):
+        if st.button("← Back to Home", key="back_to_home_signup"):
             st.session_state.page = 'landing'
             st.rerun()
 
-if st.button("Create Account", key="create_account_btn", use_container_width=True):
-    # Validation
-    if not email or not password or not first_name:
-        st.error("Please fill in all required fields")
-    elif password != confirm_password:
-        st.error("Passwords don't match")
-    elif len(password) < 6:
-        st.error("Password must be at least 6 characters")
-    else:
-        try:
-            # Connect to database
-            conn = psycopg2.connect(os.getenv("DATABASE_URL"))
-            cursor = conn.cursor()
-            
-            # Check if email already exists
-            cursor.execute("SELECT email FROM users WHERE email = %s", (email,))
-            if cursor.fetchone():
-                st.error("Email already registered. Try signing in instead.")
-            else:
-                # Create new user
-                user_id = str(uuid.uuid4())
-                cursor.execute(
-                    "INSERT INTO users (id, email, password_hash, first_name) VALUES (%s, %s, %s, %s)",
-                    (user_id, email, password, first_name)
-                )
-                conn.commit()
-                st.success("Account created successfully! 🎉")
-                st.balloons()
-            
-            conn.close()
-            
-        except Exception as e:
-            st.error(f"Error creating account: {str(e)}")
+# Sign in page (placeholder)
+elif st.session_state.page == 'signin':
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        st.markdown('<h2 class="main-header">Sign In</h2>', unsafe_allow_html=True)
+        st.write("Sign in page - coming soon!")
+        
+        if st.button("← Back to Home", key="back_to_home_signin"):
+            st.session_state.page = 'landing'
+            st.rerun()
