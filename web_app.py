@@ -51,7 +51,7 @@ if 'page' not in st.session_state:
 
 # Landing page
 if st.session_state.page == 'landing':
-    st.markdown('<h1 class="main-header">🏠 Savings Goal Tracker</h1>', unsafe_allow_html=True)
+    st.markdown('<h1 class="main-header">💰 Savings Goal Tracker</h1>', unsafe_allow_html=True)
     st.markdown('<p class="subtitle">Turn your dreams into achievable goals</p>', unsafe_allow_html=True)
     
     col1, col2, col3 = st.columns([1, 2, 1])
@@ -62,4 +62,34 @@ if st.session_state.page == 'landing':
         
         if st.button("Sign In", key="signin_btn", use_container_width=True):
             st.session_state.page = 'signin'
+            st.rerun()
+
+# Signup page
+elif st.session_state.page == 'signup':
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        st.markdown('<h2 class="main-header">Create Your Account</h2>', unsafe_allow_html=True)
+        
+        # Input fields
+        email = st.text_input("Email Address")
+        password = st.text_input("Password", type="password")
+        confirm_password = st.text_input("Confirm Password", type="password")
+        first_name = st.text_input("First Name")
+        
+        # Signup button
+        if st.button("Create Account", key="create_account_btn", use_container_width=True):
+            # Validation
+            if not email or not password or not first_name:
+                st.error("Please fill in all required fields")
+            elif password != confirm_password:
+                st.error("Passwords don't match")
+            else:
+                # Try to create user in database
+                # TODO: Add database code here
+                st.success("Account created successfully!")
+                st.balloons()
+        
+        # Back to landing page
+        if st.button("← Back to Home", key="back_to_home"):
+            st.session_state.page = 'landing'
             st.rerun()
