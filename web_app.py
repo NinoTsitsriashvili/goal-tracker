@@ -18,6 +18,8 @@ st.markdown("""
     .main .block-container {
         background-color: #FFF5E1;
     }
+    
+    /* Headers */
     .main-header {
         text-align: center;
         color: #6B8E6B !important;
@@ -33,6 +35,26 @@ st.markdown("""
         font-size: 1.2rem;
         margin-bottom: 3rem;
     }
+    
+    /* Input fields */
+    .stTextInput > div > div > input {
+        background-color: white;
+        color: #5A7A5A;
+        border: 2px solid #8BA68B;
+        border-radius: 8px;
+    }
+    .stTextInput > div > div > input:focus {
+        border-color: #6B8E6B;
+        box-shadow: 0 0 0 2px rgba(107, 142, 107, 0.2);
+    }
+    
+    /* Input labels */
+    .stTextInput > label {
+        color: #6B8E6B !important;
+        font-weight: 600;
+    }
+    
+    /* Buttons */
     .stButton > button {
         background-color: #6B8E6B;
         color: white;
@@ -40,9 +62,16 @@ st.markdown("""
         border: none;
         padding: 0.5rem 2rem;
         font-size: 1rem;
+        font-weight: 600;
     }
     .stButton > button:hover {
         background-color: #5A7A5A;
+    }
+    
+    /* Error and success messages */
+    .stAlert {
+        background-color: white;
+        border-radius: 8px;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -67,6 +96,9 @@ if st.session_state.page == 'landing':
             st.rerun()
 
 # Signup page
+
+
+
 elif st.session_state.page == 'signup':
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
