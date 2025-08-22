@@ -6,19 +6,53 @@ import uuid
 
 load_dotenv()
 
-st.title("Savings Goal Tracker")
-st.write("Welcome to your personal savings tracker!")
+# Page config and styling
+st.set_page_config(page_title="Savings Goal Tracker", page_icon="🏠", layout="centered")
 
-# User Registration Form
-st.header("Create Account")
+# Custom CSS for sage green theme
+st.markdown("""
+<style>
+    .main-header {
+        text-align: center;
+        color: #6B8E6B;
+        font-size: 3rem;
+        margin-bottom: 2rem;
+    }
+    .subtitle {
+        text-align: center;
+        color: #8BA68B;
+        font-size: 1.2rem;
+        margin-bottom: 3rem;
+    }
+    .stButton > button {
+        background-color: #6B8E6B;
+        color: white;
+        border-radius: 10px;
+        border: none;
+        padding: 0.5rem 2rem;
+        font-size: 1rem;
+    }
+    .stButton > button:hover {
+        background-color: #5A7A5A;
+    }
+</style>
+""", unsafe_allow_html=True)
 
-email = st.text_input("Email")
-password = st.text_input("Password", type="password")
-first_name = st.text_input("First Name")
+# Initialize session state
+if 'page' not in st.session_state:
+    st.session_state.page = 'landing'
 
-if st.button("Register"):
-    if email and password and first_name:
-        st.success(f"Account created for {first_name}!")
-        # TODO: Save to database
-    else:
-        st.error("Please fill in all fields")
+# Landing page
+if st.session_state.page == 'landing':
+    st.markdown('<h1 class="main-header">🏠 Savings Goal Tracker</h1>', unsafe_allow_html=True)
+    st.markdown('<p class="subtitle">Turn your dreams into achievable goals</p>', unsafe_allow_html=True)
+    
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        if st.button("Sign Up", key="signup_btn", use_container_width=True):
+            st.session_state.page = 'signup'
+            st.rerun()
+        
+        if st.button("Sign In", key="signin_btn", use_container_width=True):
+            st.session_state.page = 'signin'
+            st.rerun()
