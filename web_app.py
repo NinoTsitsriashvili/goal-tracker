@@ -76,15 +76,6 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Home button (always visible)
-col1, col2, col3 = st.columns([1, 6, 1])
-with col1:
-    if st.button("🏠 Home", key="home_btn"):
-        st.session_state.page = 'landing'
-        st.rerun()
-
-st.markdown("---")  # Separator line
-
 # Initialize session state
 if 'page' not in st.session_state:
     st.session_state.page = 'landing'
@@ -136,3 +127,37 @@ elif st.session_state.page == 'signup':
         if st.button("← Back to Home", key="back_to_home"):
             st.session_state.page = 'landing'
             st.rerun()
+
+if st.button("Create Account", key="create_account_btn", use_container_width=True):
+    # Validation
+    if not email or not password or not first_name:
+        st.error("Please fill in all required fields")
+    elif password != confirm_password:
+        st.error("Passwords don't match")
+    elif len(password) < 6:
+        st.error("Password must be at least 6 characters")
+    else:
+        try:
+            # Connect to database
+            conn = psycopg2.connect(os.getenv("DATABASE_URL"))
+            cursor = conn.cursor()
+            
+            # Check if email already exists
+            cursor.execute("SELECT email FROM users WHERE email = %s", (email,))
+            if cursor.fetchone():
+                st.error("Email already registered. Try signing in instead.")
+            else:
+                # Create new user
+                user_id = str(uuid.uuid4())
+                cursor.execute(
+                    "INSERT INTO users (id, email, password_hash, first_name) VALUES (%s, %s, %s, %s)",
+                    (user_id, email, password, first_name)
+                )
+                conn.commit()
+                st.success("Account created successfully! 🎉")
+                st.balloons()
+            
+            conn.close()
+            
+        except Exception as e:
+            st.error(f"Error creating account: {str(e)}")
