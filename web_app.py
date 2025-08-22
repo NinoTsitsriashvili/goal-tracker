@@ -76,6 +76,15 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+# Home button (always visible)
+col1, col2, col3 = st.columns([1, 6, 1])
+with col1:
+    if st.button("🏠 Home", key="home_btn"):
+        st.session_state.page = 'landing'
+        st.rerun()
+
+st.markdown("---")  # Separator line
+
 # Initialize session state
 if 'page' not in st.session_state:
     st.session_state.page = 'landing'
