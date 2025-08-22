@@ -12,6 +12,12 @@ st.set_page_config(page_title="Savings Goal Tracker", page_icon="🏠", layout="
 # Custom CSS for sage green theme
 st.markdown("""
 <style>
+    .stApp {
+        background-color: #FFF5E1;
+    }
+    .main .block-container {
+        background-color: #FFF5E1;
+    }
     .main-header {
         text-align: center;
         color: #6B8E6B;
@@ -37,6 +43,7 @@ st.markdown("""
     }
 </style>
 """, unsafe_allow_html=True)
+
 
 # Initialize session state
 if 'page' not in st.session_state:
