@@ -20,9 +20,12 @@ st.markdown("""
     }
     .main-header {
         text-align: center;
-        color: #6B8E6B;
+        color: #6B8E6B !important;
         font-size: 3rem;
         margin-bottom: 2rem;
+    }
+    h1, h2, h3 {
+        color: #6B8E6B !important;
     }
     .subtitle {
         text-align: center;
@@ -43,7 +46,6 @@ st.markdown("""
     }
 </style>
 """, unsafe_allow_html=True)
-
 
 # Initialize session state
 if 'page' not in st.session_state:
